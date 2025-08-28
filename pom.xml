@@ -602,5 +602,6 @@
         <name>trialhy059y-test-libs-release-releases</name>
         <url>https://trialhy059y.jfrog.io/artifactory/test-libs-release</url>
     </repository>
-  </distributionManagement>
+</distributionManagement>
+
 </project>
