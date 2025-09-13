@@ -15,7 +15,7 @@ pipeline {
         stage('Checkout') {
             agent any
             steps {
-                git url: 'https://github.com/AbhishekSaharawat/Addressbook.git', branch: 'master'
+                git url: 'https://github.com/AbhishekSaharawat/Addressbook.git', branch: 'main'
                 stash name: 'source-code', includes: '**/*'
             }
         }
@@ -42,7 +42,7 @@ pipeline {
             agent any
             steps {
                 unstash 'source-code'
-                echo 'Unit Testing in Progress'
+                echo 'Unit Testing in Progress'                
                 sh 'mvn test'
             }
         }
@@ -60,7 +60,7 @@ pipeline {
             agent { label 'JenkinsSlave' }
             steps {
                 unstash 'source-code'
-                echo 'Packaging in Progress'
+                echo "Packaging in Progress for code version ${params.APPVERSION}"
                 sh 'mvn package'
             }
         }
