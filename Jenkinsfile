@@ -1,30 +1,78 @@
 pipeline {
-   agent none
-   tools{
-//     jdk "myjava"
-        maven "mymaven"
-   }
+    agent none
+
+    tools {
+        maven 'mymaven'
+    }
+    
+    parameters{
+        string(name:'ENV', defaultValue:'Test', description:'Version to deploy')
+        booleanParam(name: 'executeTests', defaultValue:true , description:'Decide to run test cases')        
+        choice(name:'APPVERSION' , choices: ['1.1','1.2','1.3'], description:'Select application version')
+    }
+    
     stages {
-        stage('Compile') { //prod
-        agent any
+        stage('Checkout') {
+            agent any
             steps {
-                echo "Compile the code"
-                sh "mvn compile"
+                git url: 'https://github.com/AbhishekSaharawat/Addressbook.git', branch: 'master'
+                stash name: 'source-code', includes: '**/*'
             }
         }
-         stage('UnitTest') { //test
-         agent any
+
+        stage('Compile') {
+            agent any
             steps {
-                echo "Test the code"
-                sh "mvn test"
+                unstash 'source-code'
+                echo "Compiling Job in ${params.ENV} Environment"
+                sh 'mvn compile'
             }
         }
-         stage('Package') {//dev
-        agent {label 'linux_slave'}
+
+        stage('Code Review') {
+            agent any
             steps {
-                echo "Package the code"
-                sh "mvn package"
+                unstash 'source-code'
+                echo 'Code Review Under Progress'
+                sh 'mvn pmd:pmd'
+            }
+        }
+
+        stage('Unit Test') {
+            agent any
+            steps {
+                unstash 'source-code'
+                echo 'Unit Testing in Progress'
+                sh 'mvn test'
+            }
+        }
+
+        // stage('Coverage Analysis') {
+        //     agent any
+        //     steps {
+        //         unstash 'source-code'
+        //         echo 'Coverage Analysis in Progress'
+        //         sh 'mvn verify'
+        //     }
+        // }
+
+        stage('Packaging') {
+            agent { label 'JenkinsSlave' }
+            steps {
+                unstash 'source-code'
+                echo 'Packaging in Progress'
+                sh 'mvn package'
+            }
+        }
+
+        stage('Publish To JFrog') {
+            agent {label 'JenkinsSlave'}
+            steps {
+                unstash 'source-code'
+                echo 'Publish to JFrog in Progress'
+                sh 'mvn -X -U deploy -s settings.xml'
             }
         }
     }
 }
+
