@@ -65,7 +65,7 @@ pipeline {
         stage('Packaging') {
          //   agent { label 'JenkinsSlave' }
             script {
-                sshagent(['JenkinsSlave1'])
+                sshagent(['JenkinsSlave'])
                 unstash 'source-code'
                 sh "scp -o StrictHostKeyChecking=no server-script.sh ${BUILD_server}:/home/ec2-user"
                 sh "ssh -o StrictHostKeyChecking=no ${BUILD_SERVER} 'bash ~/server-script.sh'" 
