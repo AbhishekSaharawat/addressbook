@@ -10,6 +10,11 @@ pipeline {
         booleanParam(name: 'executeTests', defaultValue:true , description:'Decide to run test cases')        
         choice(name:'APPVERSION' , choices: ['1.1','1.2','1.3'], description:'Select application version')
     }
+
+    environment{
+         BUILD_SERVER='ubuntu@43.205.228.232'
+                 
+    }
     
     stages {
         stage('Checkout') {
