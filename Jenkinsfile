@@ -40,10 +40,16 @@ pipeline {
 
         stage('Unit Test') {
             agent any
+            
             steps {
                 unstash 'source-code'
                 echo 'Unit Testing in Progress'                
                 sh 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
             }
         }
 
@@ -67,6 +73,9 @@ pipeline {
 
         stage('Publish To JFrog') {
             agent {label 'JenkinsSlave'}
+            input {
+                expression {params.executeTests == true}
+            }
             steps {
                 unstash 'source-code'
                 echo 'Publish to JFrog in Progress'
