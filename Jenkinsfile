@@ -74,7 +74,8 @@ pipeline {
         stage('Publish To JFrog') {
             agent {label 'JenkinsSlave'}
             input {
-                expression {params.executeTests == true}
+                message "Do you want to Publish to JFrog"
+                ok "Yes, Publish"
             }
             steps {
                 unstash 'source-code'
