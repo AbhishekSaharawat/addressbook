@@ -51,11 +51,11 @@ pipeline {
                 echo 'Unit Testing in Progress'                
                 sh 'mvn test'
             }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
+          //  post {
+          //      always {
+          //          junit 'target/surefire-reports/*.xml'
+          //      }
+          //  }
         }
 
         // stage('Coverage Analysis') {
