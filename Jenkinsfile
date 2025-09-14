@@ -69,14 +69,17 @@ pipeline {
 
         stage('Packaging') {
          //   agent { label 'JenkinsSlave' }
-            script {
+            agent any
+            steps{
+              script {
                 sshagent(['JenkinsSlave'])
                 unstash 'source-code'
                 sh "scp -o StrictHostKeyChecking=no server-script.sh ${BUILD_server}:/home/ubuntu"
                 sh "ssh -o StrictHostKeyChecking=no ${BUILD_SERVER} 'bash ~/server-script.sh'" 
                 //   echo "Packaging in Progress for code version ${params.APPVERSION}"
                 // sh 'mvn package'
-            }
+               }
+            }  
         }
 
         stage('Publish To JFrog') {
